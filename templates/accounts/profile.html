@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - Ecom Shop{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <div class="avatar-circle">
+                <span class="avatar-text">{{ user.first_name.0|default:user.username.0|upper }}{{ user.last_name.0|default:""|upper }}</span>
+            </div>
+        </div>
+        <div class="profile-info">
+            <h1>Welcome back, {{ user.first_name|default:user.username }}! 👋</h1>
+            <p>Manage your account settings and preferences</p>
+        </div>
+    </div>
+    
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="alert-icon">✅</i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div class="profile-content">
+        <div class="profile-tabs">
+            <button class="tab-button active" data-tab="personal">
+                <i class="tab-icon">👤</i>
+                <span>Personal Info</span>
+            </button>
+            <button class="tab-button" data-tab="address">
+                <i class="tab-icon">📍</i>
+                <span>Address</span>
+            </button>
+            <button class="tab-button" data-tab="orders">
+                <i class="tab-icon">📦</i>
+                <span>My Orders</span>
+            </button>
+        </div>
+        
+        <form method="post" class="profile-form">
+            {% csrf_token %}
+            
+            <div class="tab-content active" id="personal">
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>👤 Personal Information</h3>
+                        <p>Update your basic account details</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-group">
+                            <i class="input-icon">🏷️</i>
+                            {{ u_form.username }}
+                            <label class="floating-label">Username</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <div class="input-group">
+                                <i class="input-icon">👤</i>
+                                {{ u_form.first_name }}
+                                <label class="floating-label">First Name</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group half">
+                            <div class="input-group">
+                                <i class="input-icon">👤</i>
+                                {{ u_form.last_name }}
+                                <label class="floating-label">Last Name</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-group">
+                            <i class="input-icon">📧</i>
+                            {{ u_form.email }}
+                            <label class="floating-label">Email Address</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="address">
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>📍 Address Information</h3>
+                        <p>Manage your shipping addresses</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-group">
+                            <i class="input-icon">📱</i>
+                            {{ p_form.phone_number }}
+                            <label class="floating-label">Phone Number</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-group">
+                            <i class="input-icon">📍</i>
+                            {{ p_form.address }}
+                            <label class="floating-label">Street Address</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <div class="input-group">
+                                <i class="input-icon">🏙️</i>
+                                {{ p_form.city }}
+                                <label class="floating-label">City</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group half">
+                            <div class="input-group">
+                                <i class="input-icon">📮</i>
+                                {{ p_form.postal_code }}
+                                <label class="floating-label">Postal Code</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-group">
+                            <i class="input-icon">🌍</i>
+                            {{ p_form.country }}
+                            <label class="floating-label">Country</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="orders">
+                <div class="orders-section">
+                    <div class="section-header">
+                        <h3>📦 My Orders</h3>
+                        <p>Track your recent purchases</p>
+                    </div>
+                    
+                    {% if recent_orders %}
+                        <div class="orders-list">
+                            {% for order in recent_orders %}
+                                <div class="order-item">
+                                    <div class="order-header">
+                                        <div class="order-id">
+                                            <span class="order-number">#{{ order.id }}</span>
+                                            <span class="order-date">{{ order.created|date:"M d, Y" }}</span>
+                                        </div>
+                                        <div class="order-status status-{{ order.status }}">
+                                            {{ order.get_status_display }}
+                                        </div>
+                                    </div>
+                                    <div class="order-details">
+                                        <div class="order-items">
+                                            {% for item in order.items.all %}
+                                                <span class="item-name">{{ item.product.name }}</span>
+                                                {% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="order-total">
+                                            ${{ order.get_total_cost }}
+                                        </div>
+                                    </div>
+                                    <div class="order-actions">
+                                        <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-sm btn-outline">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="orders-footer">
+                            <a href="{% url 'orders:order_list' %}" class="btn btn-secondary">
+                                View All Orders
+                                <i class="btn-icon">→</i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">📦</div>
+                            <h4>No orders yet</h4>
+                            <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
+                            <a href="{% url 'shop:product_list' %}" class="btn btn-primary">
+                                Start Shopping
+                                <i class="btn-icon">🛒</i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button type="submit" class="btn btn-primary btn-large">
+                    <span>Save Changes</span>
+                    <i class="btn-icon">💾</i>
+                </button>
+                
+                <div class="profile-links">
+                    <a href="{% url 'orders:order_list' %}" class="profile-link">
+                        <i class="link-icon">📦</i>
+                        <span>My Orders</span>
+                    </a>
+                    <a href="{% url 'accounts:change_password' %}" class="profile-link">
+                        <i class="link-icon">🔒</i>
+                        <span>Change Password</span>
+                    </a>
+                    <a href="{% url 'accounts:wishlist' %}" class="profile-link">
+                        <i class="link-icon">💝</i>
+                        <span>Wishlist</span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            button.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+});
+</script>
+{% endblock %}

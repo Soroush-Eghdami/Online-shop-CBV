@@ -1,0 +1,10 @@
+/* Simple test CSS */
+body {
+    background-color: #ff0000 !important;
+}
+
+.test-red {
+    color: red;
+    font-size: 24px;
+    font-weight: bold;
+}

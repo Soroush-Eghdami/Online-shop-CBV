@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Ecom Shop{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.4">
+</head>
+<body>
+<header>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{% url 'shop:product_list' %}">🛍️ Ecom Shop</a>
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'shop:product_list' %}" class="nav-link">🏠 Home</a>
+            <a href="{% url 'cart:cart_detail' %}" class="nav-link cart-link">
+                🛒 Cart ({{ cart|length }})
+            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:wishlist' %}" class="nav-link wishlist-link">
+                    💝 Wishlist ({{ wishlist_count }})
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="nav-link">👤 Profile</a>
+                <a href="{% url 'orders:order_list' %}" class="nav-link">📦 Orders</a>
+                <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link logout-btn">🚪 Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="nav-link">🔑 Login</a>
+                <a href="{% url 'accounts:register' %}" class="nav-link register-link">✨ Register</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>🛍️ Ecom Shop</h4>
+            <p>Your trusted online shopping destination</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="{% url 'shop:product_list' %}">Products</a>
+            <a href="{% url 'cart:cart_detail' %}">Cart</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:wishlist' %}">Wishlist</a>
+                <a href="{% url 'accounts:profile' %}">Profile</a>
+                <a href="{% url 'orders:order_list' %}">Orders</a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}">Login</a>
+                <a href="{% url 'accounts:register' %}">Register</a>
+            {% endif %}
+        </div>
+        <div class="footer-section">
+            <h4>Support</h4>
+            <p>📧 support@ecomshop.com</p>
+            <p>📞 +1 (555) 123-4567</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Ecom Shop. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="{% static 'js/cart.js' %}"></script>
+</body>
+</html>

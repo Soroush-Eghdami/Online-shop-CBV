@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">🛍️ Our Products</h1>
+
+  <!-- Search form -->
+  <form method="get" action="{% url 'shop:product_list' %}" class="search-form">
+    <input type="text" name="q" placeholder="Search products..." value="{{ query|default:'' }}">
+    <button type="submit" class="btn search-btn">🔍 Search</button>
+    {% if query %}
+      <a href="{% url 'shop:product_list' %}" class="btn btn-secondary">Clear</a>
+    {% endif %}
+  </form>
+
+  {% if query %}
+    <div class="search-results">
+      <p>Search results for "<strong>{{ query }}</strong>" ({{ products|length }} product{{ products|length|pluralize }} found)</p>
+    </div>
+  {% endif %}
+
+{% if products %}
+  <div class="product-grid">
+    {% for product in products %}
+      <div class="product-card">
+        <a href="{% url 'shop:product_detail' product.id product.slug %}">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <img src="https://via.placeholder.com/220x180?text=No+Image" alt="No image">
+          {% endif %}
+        </a>
+
+        <h3>
+          <a href="{% url 'shop:product_detail' product.id product.slug %}">
+            {{ product.name }}
+          </a>
+        </h3>
+
+        <p class="price">${{ product.price }}</p>
+
+        <!-- Product Actions -->
+        <div class="product-actions">
+          <form action="{% url 'cart:cart_add' product.id %}" method="post" class="add-to-cart-form">
+            {% csrf_token %}
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="override" value="False">
+            <button type="submit" class="btn btn-primary">🛒 Add to Cart</button>
+          </form>
+          
+          {% if user.is_authenticated %}
+            <form action="{% url 'accounts:add_to_wishlist' product.id %}" method="post" class="wishlist-form">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-secondary" title="Add to Wishlist">
+                💝
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  {% if query %}
+    <div class="no-results">
+      <div class="no-results-icon">🔍</div>
+      <h3>No products found</h3>
+      <p>Sorry, we couldn't find any products matching "<strong>{{ query }}</strong>"</p>
+      <p>Try searching with different keywords or <a href="{% url 'shop:product_list' %}">browse all products</a></p>
+    </div>
+  {% else %}
+    <div class="no-products">
+      <div class="no-products-icon">📦</div>
+      <h3>No products available</h3>
+      <p>We're working on adding more products. Check back soon!</p>
+    </div>
+  {% endif %}
+{% endif %}
+
+{% endblock %}
