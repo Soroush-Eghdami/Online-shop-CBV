@@ -90,4 +90,3 @@ Made with ❤️ by [Soroush Eghdami](https://github.com/Soroush-Eghdami)
 
 ---
 
-Feel free to customize this README to match any specific details or features of your implementation!
