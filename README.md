@@ -68,12 +68,18 @@ Welcome to **Online-shop-CBV**, a modern e-commerce web application built with D
 
 ```
 Online-shop-CBV/
-├── shop/              # Main Django app (CBV implementation)
-├── templates/         # HTML templates
-├── static/            # Static files (CSS, JS, images)
-├── requirements.txt   # Python dependencies
+├── accounts/        # User accounts app
+├── cart/            # Shopping cart app
+├── ecom/            # Main project configuration (settings, urls, wsgi, etc.)
+├── orders/          # Order management app
+├── shop/            # Main Django app (CBV implementation)
+├── static/          # Static files (CSS, JS, images)
+├── staticfiles/     # Collected static files (for deployment)
+├── templates/       # HTML templates
+├── .gitignore
 ├── manage.py
-└── README.md
+├── requirements.txt
+├── README.md
 ```
 
 ## Contributing
@@ -89,4 +95,5 @@ This project is licensed under the MIT License.
 Made with ❤️ by [Soroush Eghdami](https://github.com/Soroush-Eghdami)
 
 ---
+
 
